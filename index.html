@@ -23,7 +23,7 @@
         <script src="js/jasmid/replayer.js"></script>
 
         <script type="text/javascript" src="js/dat.gui.js"></script>
-
+        <script src="fonts/times.typeface.js"></script>   
         <style>
             canvas
             {
@@ -237,9 +237,15 @@
                 }
             }
 
-            function remove_keys()
+            function show_name_keys()
             {
-
+                for (i = 0; i < keys_obj.length; i++)
+                {
+                    if (keys_obj[i + 1] instanceof THREE.Mesh)
+                    {
+                        //
+                    }
+                }
             }
 
             function initialize_keys(obj)
@@ -256,10 +262,25 @@
                         }
                     }
                 }
-                
-                //var txt = new THREE.TextGeometry("hi");
-                //var txtMesh = new THREE.Mesh(txt, obj.material);
-                
+
+                if (obj instanceof THREE.Mesh)
+                {
+                    var textGeom = new THREE.TextGeometry('o', {
+                        font: 'times new roman', // Must be lowercase!
+                        size: 0.2,
+                        height: 10,
+                        curveSegments: 2
+
+                    });
+                    var material = new THREE.MeshPhongMaterial({
+                        color: 0xdddddd
+                    });
+                    var txtMesh = new THREE.Mesh(textGeom, material);
+                    txtMesh.position.y = obj.position.y + keys_obj[0].position.y;
+                    //txtMesh.position.x = keys_obj[0].position.x;
+                    txtMesh.lookAt(obj.position);
+                    scene.add(txtMesh);
+                }
                 keys_obj.push(obj);
                 obj.rotation.x = -Math.PI / 4.0;
                 obj.rotation.y = 0;
