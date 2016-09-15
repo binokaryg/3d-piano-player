@@ -188,6 +188,7 @@
             function prepare_scene(collada)
             {
                 collada.scene.traverse(initialize_keys);
+                rename_keys();
                 scene.add(collada.scene);
             }
 
@@ -196,6 +197,7 @@
                 // only add meshes in the material redefinition (to make keys change their color when pressed)
                 if (obj instanceof THREE.Mesh)
                 {
+
                     var newobj = obj.clone();
                     keys_obj[0].add(newobj);
                     keys_obj.push(newobj);
@@ -207,6 +209,9 @@
                     newobj.clock = new THREE.Clock(false);
                     newobj.castShadow = true;
                     newobj.receiveShadow = true;
+
+                    //if(newobj.material.color.r === 0)// black keys except first one
+
 
                     newobj.position.x += 28 * i;
 
@@ -221,16 +226,40 @@
 
             }
 
+            function rename_keys()
+            {
+                for (i = 0; i < keys_obj.length; i++)
+                {
+                    if (keys_obj[i + 1] instanceof THREE.Mesh)
+                    {
+                        keys_obj[i + 1].name = "_" + i;
+                    }
+                }
+            }
+
+            function remove_keys()
+            {
+
+            }
+
             function initialize_keys(obj)
             {
                 for (var i = 1; i <= 46; i++)
                 {
-                    if (((i - 5) % 7 == 0) || ((i != 0)) && ((i + 1) % 7 == 0))   //places to be skipped (there is no B# and E#)
+                    if (obj instanceof THREE.Mesh)
                     {
-                        continue;
+                        if ((((i - 2) % 7 == 0) || (((i + 1) % 7 == 0))) && (obj.material.color.r == 0))   //places to be skipped (there is no B# and E#)
+                        {
+                        } else
+                        {
+                            duplicate_keys(obj, i)
+                        }
                     }
-                    duplicate_keys(obj, i)
                 }
+                
+                //var txt = new THREE.TextGeometry("hi");
+                //var txtMesh = new THREE.Mesh(txt, obj.material);
+                
                 keys_obj.push(obj);
                 obj.rotation.x = -Math.PI / 4.0;
                 obj.rotation.y = 0;
@@ -442,7 +471,6 @@
             {
                 if (String.fromCharCode(ev.which) == ' ')
                     controls.play();
-
             }
 
             window.onload = function ()
@@ -472,6 +500,7 @@
                         "Jun Ta Lagyo, binokary": "juntalagyo.mid",
                         "Suna Katha Euta Geet, binokary": "suna-katha-basic.mid",
                         "Timi Ma Bhanda, binokary": "timi-ma-vanda.mid",
+                        "Test C1 - B7, binokary": "test-c1-b7.mid"
                     };
                     var gui = new dat.GUI({width: 625});
                     //gui.add(controls, 'key_attack_time', 2.0 , 40.0);
