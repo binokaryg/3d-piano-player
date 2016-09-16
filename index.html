@@ -228,59 +228,51 @@
 
             function rename_keys()
             {
-                for (i = 0; i < keys_obj.length; i++)
+                for (i = 1; i < keys_obj.length; i++)
                 {
-                    if (keys_obj[i + 1] instanceof THREE.Mesh)
+                    if (keys_obj[i] instanceof THREE.Mesh)
                     {
-                        keys_obj[i + 1].name = "_" + i;
+                        num = i - 1;
+                        keys_obj[i].name = "_" + num;
                     }
                 }
+
+                show_name_keys();
             }
 
             function show_name_keys()
             {
+
+                var material = new THREE.MeshPhongMaterial({
+                    color: 0xdddddd
+                });
+
                 for (i = 0; i < keys_obj.length; i++)
                 {
-                    if (keys_obj[i + 1] instanceof THREE.Mesh)
+                    if (keys_obj[i] instanceof THREE.Mesh)
                     {
-                        //
+
+                        var textGeom = new THREE.TextGeometry(keys_obj[i].name.substring(1), {
+                            font: 'times new roman', // Must be lowercase!
+                            size: 0.1,
+                            height: 10,
+                            curveSegments: 2
+
+                        });
+                        var txtMesh = new THREE.Mesh(textGeom, material);
+                        txtMesh.position.setY(keys_obj[i].position.y / 100);
+                        //alert(txtMesh.position.x + "\n" + obj.position.x);
+                        txtMesh.position.setX(keys_obj[i].position.x / 100);
+                        txtMesh.position.setZ(keys_obj[i].position.z / 100);
+                        //txtMesh.lookAt(obj.position);
+                        txtMesh.scale.z = 0.003;
+                        scene.add(txtMesh);
                     }
                 }
             }
 
             function initialize_keys(obj)
             {
-                for (var i = 1; i <= 46; i++)
-                {
-                    if (obj instanceof THREE.Mesh)
-                    {
-                        if ((((i - 2) % 7 == 0) || (((i + 1) % 7 == 0))) && (obj.material.color.r == 0))   //places to be skipped (there is no B# and E#)
-                        {
-                        } else
-                        {
-                            duplicate_keys(obj, i)
-                        }
-                    }
-                }
-
-                if (obj instanceof THREE.Mesh)
-                {
-                    var textGeom = new THREE.TextGeometry('o', {
-                        font: 'times new roman', // Must be lowercase!
-                        size: 0.2,
-                        height: 10,
-                        curveSegments: 2
-
-                    });
-                    var material = new THREE.MeshPhongMaterial({
-                        color: 0xdddddd
-                    });
-                    var txtMesh = new THREE.Mesh(textGeom, material);
-                    txtMesh.position.y = obj.position.y + keys_obj[0].position.y;
-                    //txtMesh.position.x = keys_obj[0].position.x;
-                    txtMesh.lookAt(obj.position);
-                    scene.add(txtMesh);
-                }
                 keys_obj.push(obj);
                 obj.rotation.x = -Math.PI / 4.0;
                 obj.rotation.y = 0;
@@ -299,6 +291,18 @@
                     obj.material.specular = new THREE.Color().setRGB(0.25, 0.25, 0.25);
                     ;
                     obj.material.note_off = obj.material.color.clone();
+
+                    //duplicate keys 46*2=82
+                    for (var i = 1; i <= 48; i++)
+                    {
+                        //places to be skipped (there is no B# and E#)
+                        if ((((i - 2) % 7 == 0) || (((i + 1) % 7 == 0))) && (obj.material.color.r == 0))
+                        {
+                        } else
+                        {
+                            duplicate_keys(obj, i)
+                        }
+                    }
 
                 }
 
